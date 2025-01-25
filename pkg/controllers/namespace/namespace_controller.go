@@ -93,8 +93,17 @@ func (r *ClientOrgReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	}
 
 	if ns.Labels[kmapi.ClientOrgKey] == "" || ns.Labels[kmapi.ClientOrgKey] == "terminating" {
+		klog.Infof("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnope")
 		return ctrl.Result{}, nil
 	}
+
+	var gfs openvizapi.GrafanaDashboardList
+	err := r.kc.List(context.TODO(), &gfs, client.InNamespace(clientorg.MonitoringNamespace(ns.Name)))
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	klog.Infof("+++++++++++++++++++++++++++++ %v %v +++++ %v %v", ns.Name, clientorg.MonitoringNamespace(ns.Name), len(gfs.Items), ns.Labels)
+
 	clientOrgId := ns.Annotations[kmapi.AceOrgIDKey]
 	if clientOrgId == "" {
 		return ctrl.Result{}, nil
